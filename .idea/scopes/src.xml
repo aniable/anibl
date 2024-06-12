@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="src" pattern="src[anibl.main]:com.aniable.anibl..*" />
+</component>
