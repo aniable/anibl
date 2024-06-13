@@ -20,11 +20,11 @@ repositories {
 }
 
 dependencies {
-	implementation(libs.spring.boot.starter.data.jpa)
 	implementation(libs.spring.boot.starter.mail)
 	implementation(libs.spring.boot.starter.web)
 	developmentOnly(libs.spring.boot.devtools)
 	testImplementation(libs.spring.boot.starter.test)
+	implementation(libs.exposed.starter)
 	implementation(libs.jackson.module.kotlin)
 	implementation(libs.kotlin.reflect)
 	runtimeOnly(libs.h2)

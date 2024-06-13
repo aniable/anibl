@@ -2,16 +2,17 @@
 kotlin = "2.0.0"
 springBoot = "3.3.0"
 springDependencyManagement = "1.1.5"
+exposed = "0.51.1"
 jacksonModuleKotlin = "2.17.1"
 h2 = "2.2.224"
 junitPlatformLauncher = "1.11.0-M2"
 
 [libraries]
-spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "springBoot" }
 spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-starter-mail", version.ref = "springBoot" }
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
 spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "springBoot" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
+exposed-starter = { module = "org.jetbrains.exposed:exposed-spring-boot-starter", version.ref = "exposed" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jacksonModuleKotlin" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 h2 = { module = "com.h2database:h2", version.ref = "h2" }
