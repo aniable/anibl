@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 @Suppress("unused")
 @RestControllerAdvice
 @Controller
-class HttpExceptionHandler : ErrorController {
+class ErrorExceptionHandler : ErrorController {
 
 	@ExceptionHandler(HttpException::class)
 	fun handleException(exception: HttpException, request: HttpServletRequest): ResponseEntity<ErrorResponseBody> {
