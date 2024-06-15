@@ -43,6 +43,11 @@ sealed class HttpException(val status: HttpStatus, override val message: String?
 	class NotFound(message: String? = null) : HttpException(HttpStatus.NOT_FOUND, message)
 
 	/**
+	 * See: [409 Conflict](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/409)
+	 */
+	class Conflict(message: String? = null) : HttpException(HttpStatus.CONFLICT, message)
+
+	/**
 	 * See: [429 Too Many Requests on MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429)
 	 */
 	class TooManyRequests(message: String? = null) : HttpException(HttpStatus.TOO_MANY_REQUESTS, message)
