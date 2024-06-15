@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.aniable.anibl
+package com.aniable.anibl.error
 
 import jakarta.servlet.RequestDispatcher
 import jakarta.servlet.http.HttpServletRequest
