@@ -34,9 +34,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 class HttpExceptionHandler : ErrorController {
 
 	@ExceptionHandler(HttpException::class)
-	fun handleException(exception: HttpException): ResponseEntity<ErrorResponseBody> {
+	fun handleException(exception: HttpException, request: HttpServletRequest): ResponseEntity<ErrorResponseBody> {
 		return ResponseEntity.status(exception.status).body(
-			ErrorResponseBody(exception.status.value(), exception.getReason())
+			ErrorResponseBody(
+				status = exception.status.value(),
+				error = exception.getReason(),
+				path = request.requestURI.substring(request.contextPath.length)
+			)
 		)
 	}
 
@@ -49,7 +53,11 @@ class HttpExceptionHandler : ErrorController {
 			throw HttpException.InternalServerError()
 		}
 		return ResponseEntity.status(httpStatus).body(
-			ErrorResponseBody(httpStatus.value(), httpStatus.reasonPhrase)
+			ErrorResponseBody(
+				status = httpStatus.value(),
+				error = httpStatus.reasonPhrase,
+				path = request.requestURI.substring(request.contextPath.length)
+			)
 		)
 	}
 }

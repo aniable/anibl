@@ -18,6 +18,11 @@
 
 package com.aniable.anibl.error
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import java.time.Instant
 
-data class ErrorResponseBody(@JsonProperty("status_code") val statusCode: Int, val reason: String? = null)
+data class ErrorResponseBody(
+	val status: Int,
+	val error: String? = null,
+	val path: String,
+	val timestamp: Instant = Instant.now(),
+)
