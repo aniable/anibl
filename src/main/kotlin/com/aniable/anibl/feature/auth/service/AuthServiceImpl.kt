@@ -73,10 +73,10 @@ class AuthServiceImpl : AuthService {
 	 * Hash a plaintext password using Argon2. Parameters are defined in [AuthServiceImpl.Argon2Parameters].
 	 *
 	 * @param plainPassword
-	 * @return [Pair] The first value of the pair is the salt used, the second value is the hashed password.
+	 * @return The entire hashed password. Includes the Argon2 parameters, salt, and hashed password.
 	 */
 	@Synchronized
-	private fun hashPassword(plainPassword: String): Pair<String, String> {
+	private fun hashPassword(plainPassword: String): String {
 		val encoder = Argon2PasswordEncoder(
 			Argon2Parameters.ARGON2_SALT_LENGTH,
 			Argon2Parameters.ARGON2_HASH_LENGTH,
@@ -85,8 +85,7 @@ class AuthServiceImpl : AuthService {
 			Argon2Parameters.ARGON2_ITERATIONS
 		)
 		val hash = encoder.encode(plainPassword)
-		val salt = hash.split("$").map { it.trim() }.drop(1)[3]
-		return Pair(salt, hash)
+		return hash
 	}
 
 	@Synchronized
@@ -105,12 +104,9 @@ class AuthServiceImpl : AuthService {
 		verifyAuthPayload(payload)
 
 		return try {
-			val hashedPassword = hashPassword(payload.password)
-
 			Users.insertAndGetId {
 				it[username] = payload.username.lowercase()
-				it[passwordSalt] = hashedPassword.first
-				it[passwordHash] = hashedPassword.second
+				it[passwordHash] = hashPassword(payload.password)
 				it[apiKey] = generateSecureId()
 			}
 		} catch (e: ExposedSQLException) {

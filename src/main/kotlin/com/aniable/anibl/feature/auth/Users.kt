@@ -39,7 +39,6 @@ object Users : UUIDTable() {
 
 	val username: Column<String> =
 		varchar(name = "username", length = UserConstraints.USERNAME_MAX_LENGTH).uniqueIndex()
-	val passwordSalt: Column<String> = varchar(name = "password_salt", length = 255)
 	val passwordHash: Column<String> = varchar(name = "password_hash", length = 255)
 	val apiKey: Column<String> = varchar(name = "api_key", length = 32).uniqueIndex()
 	val createdAt: Column<Instant> = timestamp(name = "created_at").defaultExpression(CurrentTimestamp)
@@ -50,7 +49,6 @@ class User(id: EntityID<UUID>) : UUIDEntity(id) {
 	companion object : UUIDEntityClass<User>(Users)
 
 	var username by Users.username
-	var passwordSalt by Users.passwordSalt
 	var passwordHash by Users.passwordHash
 	var apiKey by Users.apiKey
 	val createdAt by Users.createdAt
