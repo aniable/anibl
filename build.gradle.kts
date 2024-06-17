@@ -22,6 +22,8 @@ repositories {
 dependencies {
 	implementation(libs.spring.boot.starter.mail)
 	implementation(libs.spring.boot.starter.web)
+	implementation(libs.spring.security.crypto)
+	runtimeOnly(libs.bcpkix.jdk18on)
 	developmentOnly(libs.spring.boot.devtools)
 	testImplementation(libs.spring.boot.starter.test)
 	implementation(libs.exposed.starter)
