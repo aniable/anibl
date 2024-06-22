@@ -23,7 +23,6 @@ import com.aniable.anibl.feature.auth.AuthPayload
 import com.aniable.anibl.feature.auth.User
 import com.aniable.anibl.feature.auth.UserConstraints
 import com.aniable.anibl.feature.auth.Users
-import com.aniable.anibl.feature.auth.dto.UserDto
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.insertAndGetId
@@ -120,16 +119,15 @@ class AuthServiceImpl : AuthService {
 	}
 
 	// TODO: Session tokens
-	override fun login(payload: AuthPayload.UsernamePassword): UserDto {
+	override fun login(payload: AuthPayload.UsernamePassword): User {
 		val foundUser = User.find { Users.username eq payload.username.lowercase() }.firstOrNull()
 		if (foundUser == null) throw HttpException.NotFound("User not found.")
 
 		val foundUserPasswordHash = foundUser.passwordHash
-		if (!verifyPassword(
-				payload.password, foundUserPasswordHash
-			)
-		) throw HttpException.Unauthorized("Incorrect credentials.")
+		if (!verifyPassword(payload.password, foundUserPasswordHash)) {
+			throw HttpException.Unauthorized("Incorrect credentials.")
+		}
 
-		return UserDto(username = foundUser.username, apiKey = foundUser.apiKey, createdAt = foundUser.createdAt)
+		return foundUser
 	}
 }

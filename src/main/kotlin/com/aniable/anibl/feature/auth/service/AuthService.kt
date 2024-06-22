@@ -19,12 +19,12 @@
 package com.aniable.anibl.feature.auth.service
 
 import com.aniable.anibl.feature.auth.AuthPayload
-import com.aniable.anibl.feature.auth.dto.UserDto
+import com.aniable.anibl.feature.auth.User
 import org.jetbrains.exposed.dao.id.EntityID
 import java.util.*
 
 interface AuthService {
 
 	fun register(payload: AuthPayload.UsernamePassword): EntityID<UUID>
-	fun login(payload: AuthPayload.UsernamePassword): UserDto
+	fun login(payload: AuthPayload.UsernamePassword): User
 }

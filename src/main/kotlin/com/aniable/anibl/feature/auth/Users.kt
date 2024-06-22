@@ -18,6 +18,7 @@
 
 package com.aniable.anibl.feature.auth
 
+import com.aniable.anibl.feature.auth.dto.UserDto
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -53,3 +54,5 @@ class User(id: EntityID<UUID>) : UUIDEntity(id) {
 	var apiKey by Users.apiKey
 	val createdAt by Users.createdAt
 }
+
+fun User.dto() = UserDto(username = this.username, apiKey = this.apiKey, createdAt = this.createdAt)

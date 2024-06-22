@@ -19,6 +19,7 @@
 package com.aniable.anibl.feature.auth.controller
 
 import com.aniable.anibl.feature.auth.AuthPayload
+import com.aniable.anibl.feature.auth.dto
 import com.aniable.anibl.feature.auth.dto.UserDto
 import com.aniable.anibl.feature.auth.service.AuthServiceImpl
 import org.springframework.http.ResponseEntity
@@ -34,13 +35,13 @@ class AuthControllerImpl(private val authServiceImpl: AuthServiceImpl) : AuthCon
 
 	@PostMapping("/register")
 	override fun register(@RequestBody payload: AuthPayload.UsernamePassword): ResponseEntity<String> {
-		val response = authServiceImpl.register(payload)
-		return ResponseEntity.ok(response.toString())
+		val user = authServiceImpl.register(payload)
+		return ResponseEntity.ok(user.toString())
 	}
 
 	@PostMapping("/login")
 	override fun login(@RequestBody payload: AuthPayload.UsernamePassword): ResponseEntity<UserDto> {
-		val response = authServiceImpl.login(payload)
-		return ResponseEntity.ok(response)
+		val userDto = authServiceImpl.login(payload).dto()
+		return ResponseEntity.ok(userDto)
 	}
 }
