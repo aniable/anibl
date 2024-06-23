@@ -21,12 +21,10 @@ package com.aniable.anibl.feature.auth.service
 import com.aniable.anibl.Result
 import com.aniable.anibl.feature.auth.AuthError
 import com.aniable.anibl.feature.auth.AuthPayload
-import com.aniable.anibl.feature.auth.User
-import org.jetbrains.exposed.dao.id.EntityID
-import java.util.*
+import com.aniable.anibl.feature.auth.UserEntity
 
 interface AuthService {
 
-	fun register(payload: AuthPayload.UsernamePassword): Result<EntityID<UUID>, AuthError>
-	fun login(payload: AuthPayload.UsernamePassword): Result<User, AuthError>
+	fun register(payload: AuthPayload.UsernamePassword): Result<UserEntity, AuthError>
+	fun login(payload: AuthPayload.UsernamePassword): Result<UserEntity, AuthError>
 }

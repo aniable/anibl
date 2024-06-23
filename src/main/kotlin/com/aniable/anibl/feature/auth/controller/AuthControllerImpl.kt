@@ -36,10 +36,13 @@ import org.springframework.web.bind.annotation.RestController
 class AuthControllerImpl(private val authServiceImpl: AuthServiceImpl) : AuthController {
 
 	@PostMapping("/register")
-	override fun register(@RequestBody payload: AuthPayload.UsernamePassword): ResponseEntity<String> {
+	override fun register(@RequestBody payload: AuthPayload.UsernamePassword): ResponseEntity<UserDto> {
 		when (val response = authServiceImpl.register(payload)) {
 			is Result.Failure -> response.error.handle()
-			is Result.Success -> return ResponseEntity.ok(response.data.toString())
+			is Result.Success -> {
+				val userDto = response.data.dto()
+				return ResponseEntity.ok(userDto)
+			}
 		}
 	}
 

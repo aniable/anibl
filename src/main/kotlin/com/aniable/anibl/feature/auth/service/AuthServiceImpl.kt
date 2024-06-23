@@ -19,19 +19,22 @@
 package com.aniable.anibl.feature.auth.service
 
 import com.aniable.anibl.Result
-import com.aniable.anibl.feature.auth.*
-import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.exceptions.ExposedSQLException
-import org.jetbrains.exposed.sql.insertAndGetId
+import com.aniable.anibl.feature.auth.AuthError
+import com.aniable.anibl.feature.auth.AuthPayload
+import com.aniable.anibl.feature.auth.UserConstraints
+import com.aniable.anibl.feature.auth.UserEntity
+import com.aniable.anibl.feature.auth.repository.AuthRepository
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import java.sql.SQLIntegrityConstraintViolationException
 import java.util.*
 
 @Service
-@Transactional
-class AuthServiceImpl : AuthService {
+class AuthServiceImpl(
+	private val authRepository: AuthRepository,
+	private val logger: Logger = LoggerFactory.getLogger(AuthService::class.java),
+) : AuthService {
 
 	/**
 	 * Parameters for the Argon2 password encoder.
@@ -105,36 +108,36 @@ class AuthServiceImpl : AuthService {
 	}
 
 
-	override fun register(payload: AuthPayload.UsernamePassword): Result<EntityID<UUID>, AuthError> {
+	override fun register(payload: AuthPayload.UsernamePassword): Result<UserEntity, AuthError> {
 		val authResult = verifyAuthPayload(payload)
 		if (authResult is Result.Failure) return authResult
 
 		return try {
-			val userId = Users.insertAndGetId {
-				it[username] = payload.username.lowercase()
-				it[passwordHash] = hashPassword(payload.password)
-				it[apiKey] = generateSecureId()
-			}
-			Result.Success(userId)
-		} catch (e: ExposedSQLException) {
-			when (e.cause) {
-				is SQLIntegrityConstraintViolationException -> Result.Failure(AuthError.UserExists())
-				else -> Result.Failure(AuthError.Unknown())
-			}
+			val user = authRepository.save(
+				UserEntity(
+					username = payload.username.lowercase(),
+					passwordHash = hashPassword(payload.password),
+					apiKey = generateSecureId()
+				)
+			)
+
+			logger.info("User registered {}", user.id)
+			Result.Success(user)
 		} catch (e: Exception) {
-			Result.Failure(AuthError.Unknown())
+			Result.Failure(AuthError.Unknown(e.localizedMessage))
 		}
 	}
 
-	override fun login(payload: AuthPayload.UsernamePassword): Result<User, AuthError> {
-		val foundUser = User.find { Users.username eq payload.username.lowercase() }.firstOrNull()
-		if (foundUser == null) return Result.Failure(AuthError.UserDoesNotExist())
+	override fun login(payload: AuthPayload.UsernamePassword): Result<UserEntity, AuthError> {
+		val foundUser = authRepository.findByUsername(payload.username.lowercase())
+			?: return Result.Failure(AuthError.UserDoesNotExist())
 
 		val foundUserPasswordHash = foundUser.passwordHash
 		if (!verifyPassword(payload.password, foundUserPasswordHash)) {
 			return Result.Failure(AuthError.InvalidLogin())
 		}
 
+		logger.info("User logged in {}", foundUser.id)
 		return Result.Success(foundUser)
 	}
 }

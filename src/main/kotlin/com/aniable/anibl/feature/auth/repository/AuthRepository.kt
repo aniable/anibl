@@ -16,17 +16,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.aniable.anibl.feature.auth.controller
+package com.aniable.anibl.feature.auth.repository
 
-import com.aniable.anibl.feature.auth.AuthPayload
-import com.aniable.anibl.feature.auth.dto.UserDto
-import org.springframework.http.ResponseEntity
+import com.aniable.anibl.feature.auth.UserEntity
+import org.springframework.data.repository.CrudRepository
+import org.springframework.stereotype.Repository
+import java.util.*
 
-interface AuthController {
+@Repository
+interface AuthRepository : CrudRepository<UserEntity, UUID> {
 
-	fun register(payload: AuthPayload.UsernamePassword): ResponseEntity<UserDto>
-	fun login(payload: AuthPayload.UsernamePassword): ResponseEntity<UserDto>
-//	fun logout(payload: AuthPayload.Session)
-//	fun delete(payload: AuthPayload.Session)
-//	fun changePassword(payload: AuthPayload.ChangePassword)
+	fun findByUsername(username: String): UserEntity?
 }
