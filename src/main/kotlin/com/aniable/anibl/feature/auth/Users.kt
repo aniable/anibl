@@ -41,7 +41,7 @@ object Users : UUIDTable() {
 	val username: Column<String> =
 		varchar(name = "username", length = UserConstraints.USERNAME_MAX_LENGTH).uniqueIndex()
 	val passwordHash: Column<String> = varchar(name = "password_hash", length = 255)
-	val apiKey: Column<String> = varchar(name = "api_key", length = 32).uniqueIndex()
+	val apiKey: Column<String> = varchar(name = "api_key", length = 36).uniqueIndex()
 	val createdAt: Column<Instant> = timestamp(name = "created_at").defaultExpression(CurrentTimestamp)
 }
 

@@ -65,7 +65,7 @@ class AuthServiceImpl : AuthService {
 	 */
 	@Synchronized
 	private fun generateSecureId(): String {
-		return UUID.randomUUID().toString().replace("-", "")
+		return UUID.randomUUID().toString()
 	}
 
 	/**
