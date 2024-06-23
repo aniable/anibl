@@ -39,7 +39,7 @@ class AuthServiceImpl : AuthService {
 	/**
 	 * Parameters for the Argon2 password encoder.
 	 * These should follow the recommendations set in [RFC 9106](https://www.rfc-editor.org/rfc/rfc9106.html#name-parameter-choice)
-	 * (by default we are using the "SECOND RECOMMENDED" option to save on memory).
+	 * (by default, we are using the "SECOND RECOMMENDED" option to save on memory).
 	 */
 	object Argon2Parameters {
 
@@ -48,24 +48,6 @@ class AuthServiceImpl : AuthService {
 		const val ARGON2_PARALLELISM = 4
 		const val ARGON2_MEMORY = 65_536
 		const val ARGON2_ITERATIONS = 3
-	}
-
-	private fun verifyAuthPayload(payload: AuthPayload.UsernamePassword) {
-		if (payload.username.length !in UserConstraints.USERNAME_MIN_LENGTH..UserConstraints.USERNAME_MAX_LENGTH) {
-			throw HttpException.BadRequest("Username must be between ${UserConstraints.USERNAME_MIN_LENGTH} and ${UserConstraints.USERNAME_MAX_LENGTH} characters.")
-		}
-
-		if (payload.password.length < UserConstraints.PASSWORD_MIN_LENGTH) {
-			throw HttpException.BadRequest("Password must be a minimum of ${UserConstraints.PASSWORD_MIN_LENGTH} characters.")
-		}
-	}
-
-	/**
-	 * Generate a secure and unique ID using [UUID.randomUUID] as the base.
-	 */
-	@Synchronized
-	private fun generateSecureId(): String {
-		return UUID.randomUUID().toString()
 	}
 
 	/**
@@ -87,6 +69,14 @@ class AuthServiceImpl : AuthService {
 		return hash
 	}
 
+	/**
+	 * Verify that the plain-text [plainPassword] matches the [hashPassword].
+	 * This can be used for authorizing a user when they attempt to log in.
+	 *
+	 * @param plainPassword The plain-text password to match [hashPassword] against.
+	 * @param hashPassword The hashed password to match [plainPassword] against.
+	 * @return True if the [plainPassword] matches the [hashPassword].
+	 */
 	@Synchronized
 	private fun verifyPassword(plainPassword: String, hashPassword: String): Boolean {
 		val encoder = Argon2PasswordEncoder(
@@ -97,6 +87,24 @@ class AuthServiceImpl : AuthService {
 			Argon2Parameters.ARGON2_ITERATIONS
 		)
 		return encoder.matches(plainPassword, hashPassword)
+	}
+
+	/**
+	 * Generate a secure and unique ID using [UUID.randomUUID] as the base.
+	 */
+	@Synchronized
+	private fun generateSecureId(): String {
+		return UUID.randomUUID().toString()
+	}
+
+	private fun verifyAuthPayload(payload: AuthPayload.UsernamePassword) {
+		if (payload.username.length !in UserConstraints.USERNAME_MIN_LENGTH..UserConstraints.USERNAME_MAX_LENGTH) {
+			throw HttpException.BadRequest("Username must be between ${UserConstraints.USERNAME_MIN_LENGTH} and ${UserConstraints.USERNAME_MAX_LENGTH} characters.")
+		}
+
+		if (payload.password.length < UserConstraints.PASSWORD_MIN_LENGTH) {
+			throw HttpException.BadRequest("Password must be a minimum of ${UserConstraints.PASSWORD_MIN_LENGTH} characters.")
+		}
 	}
 
 	override fun register(payload: AuthPayload.UsernamePassword): EntityID<UUID> {
