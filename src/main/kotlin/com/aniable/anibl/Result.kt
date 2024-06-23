@@ -16,17 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.aniable.anibl.feature.auth.service
+package com.aniable.anibl
 
-import com.aniable.anibl.Result
-import com.aniable.anibl.feature.auth.AuthError
-import com.aniable.anibl.feature.auth.AuthPayload
-import com.aniable.anibl.feature.auth.User
-import org.jetbrains.exposed.dao.id.EntityID
-import java.util.*
+sealed class Result<out D, out E> {
 
-interface AuthService {
-
-	fun register(payload: AuthPayload.UsernamePassword): Result<EntityID<UUID>, AuthError>
-	fun login(payload: AuthPayload.UsernamePassword): Result<User, AuthError>
+	data class Success<out D>(val data: D) : Result<D, Nothing>()
+	data class Failure<out E>(val error: E) : Result<Nothing, E>()
 }

@@ -18,11 +18,8 @@
 
 package com.aniable.anibl.feature.auth.service
 
-import com.aniable.anibl.error.HttpException
-import com.aniable.anibl.feature.auth.AuthPayload
-import com.aniable.anibl.feature.auth.User
-import com.aniable.anibl.feature.auth.UserConstraints
-import com.aniable.anibl.feature.auth.Users
+import com.aniable.anibl.Result
+import com.aniable.anibl.feature.auth.*
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.insertAndGetId
@@ -97,45 +94,47 @@ class AuthServiceImpl : AuthService {
 		return UUID.randomUUID().toString()
 	}
 
-	private fun verifyAuthPayload(payload: AuthPayload.UsernamePassword) {
+	private fun verifyAuthPayload(payload: AuthPayload.UsernamePassword): Result<Unit, AuthError> {
 		if (payload.username.length !in UserConstraints.USERNAME_MIN_LENGTH..UserConstraints.USERNAME_MAX_LENGTH) {
-			throw HttpException.BadRequest("Username must be between ${UserConstraints.USERNAME_MIN_LENGTH} and ${UserConstraints.USERNAME_MAX_LENGTH} characters.")
+			return Result.Failure(AuthError.InvalidUsernameLength())
 		}
-
 		if (payload.password.length < UserConstraints.PASSWORD_MIN_LENGTH) {
-			throw HttpException.BadRequest("Password must be a minimum of ${UserConstraints.PASSWORD_MIN_LENGTH} characters.")
+			return Result.Failure(AuthError.InvalidPasswordLength())
 		}
+		return Result.Success(Unit)
 	}
 
-	override fun register(payload: AuthPayload.UsernamePassword): EntityID<UUID> {
-		verifyAuthPayload(payload)
+
+	override fun register(payload: AuthPayload.UsernamePassword): Result<EntityID<UUID>, AuthError> {
+		val authResult = verifyAuthPayload(payload)
+		if (authResult is Result.Failure) return authResult
 
 		return try {
-			Users.insertAndGetId {
+			val userId = Users.insertAndGetId {
 				it[username] = payload.username.lowercase()
 				it[passwordHash] = hashPassword(payload.password)
 				it[apiKey] = generateSecureId()
 			}
+			Result.Success(userId)
 		} catch (e: ExposedSQLException) {
-			when (val cause = e.cause) {
-				is SQLIntegrityConstraintViolationException -> throw HttpException.Conflict("Username already exists.")
-				else -> throw HttpException.InternalServerError(cause?.localizedMessage)
+			when (e.cause) {
+				is SQLIntegrityConstraintViolationException -> Result.Failure(AuthError.UserExists())
+				else -> Result.Failure(AuthError.Unknown())
 			}
 		} catch (e: Exception) {
-			throw HttpException.InternalServerError(e.localizedMessage)
+			Result.Failure(AuthError.Unknown())
 		}
 	}
 
-	// TODO: Session tokens
-	override fun login(payload: AuthPayload.UsernamePassword): User {
+	override fun login(payload: AuthPayload.UsernamePassword): Result<User, AuthError> {
 		val foundUser = User.find { Users.username eq payload.username.lowercase() }.firstOrNull()
-		if (foundUser == null) throw HttpException.NotFound("User not found.")
+		if (foundUser == null) return Result.Failure(AuthError.UserDoesNotExist())
 
 		val foundUserPasswordHash = foundUser.passwordHash
 		if (!verifyPassword(payload.password, foundUserPasswordHash)) {
-			throw HttpException.Unauthorized("Incorrect credentials.")
+			return Result.Failure(AuthError.InvalidLogin())
 		}
 
-		return foundUser
+		return Result.Success(foundUser)
 	}
 }

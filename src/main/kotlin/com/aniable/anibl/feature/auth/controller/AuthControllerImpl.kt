@@ -18,9 +18,11 @@
 
 package com.aniable.anibl.feature.auth.controller
 
+import com.aniable.anibl.Result
 import com.aniable.anibl.feature.auth.AuthPayload
 import com.aniable.anibl.feature.auth.dto
 import com.aniable.anibl.feature.auth.dto.UserDto
+import com.aniable.anibl.feature.auth.handle
 import com.aniable.anibl.feature.auth.service.AuthServiceImpl
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -35,13 +37,20 @@ class AuthControllerImpl(private val authServiceImpl: AuthServiceImpl) : AuthCon
 
 	@PostMapping("/register")
 	override fun register(@RequestBody payload: AuthPayload.UsernamePassword): ResponseEntity<String> {
-		val user = authServiceImpl.register(payload)
-		return ResponseEntity.ok(user.toString())
+		when (val response = authServiceImpl.register(payload)) {
+			is Result.Failure -> response.error.handle()
+			is Result.Success -> return ResponseEntity.ok(response.data.toString())
+		}
 	}
 
 	@PostMapping("/login")
 	override fun login(@RequestBody payload: AuthPayload.UsernamePassword): ResponseEntity<UserDto> {
-		val userDto = authServiceImpl.login(payload).dto()
-		return ResponseEntity.ok(userDto)
+		when (val response = authServiceImpl.login(payload)) {
+			is Result.Failure -> response.error.handle()
+			is Result.Success -> {
+				val userDto = response.data.dto()
+				return ResponseEntity.ok(userDto)
+			}
+		}
 	}
 }
