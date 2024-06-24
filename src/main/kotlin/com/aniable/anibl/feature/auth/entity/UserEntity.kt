@@ -16,13 +16,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.aniable.anibl.feature.auth
+package com.aniable.anibl.feature.auth.entity
 
 import com.aniable.anibl.feature.auth.dto.UserDto
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
 import java.util.*
 
@@ -49,7 +51,14 @@ data class UserEntity(
 	@Column(name = "api_key", unique = true, nullable = false, length = 36) val apiKey: String,
 	@CreatedDate var createdDate: LocalDateTime? = null,
 	@LastModifiedDate var lastModifiedDate: LocalDateTime? = null,
-)
+) : UserDetails {
+
+	override fun getAuthorities(): MutableCollection<out GrantedAuthority> = mutableListOf()
+
+	override fun getPassword(): String = passwordHash
+
+	override fun getUsername(): String = username
+}
 
 fun UserEntity.dto() = UserDto(
 	id = this.id!!,

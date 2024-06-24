@@ -21,8 +21,8 @@ package com.aniable.anibl.feature.auth.service
 import com.aniable.anibl.Result
 import com.aniable.anibl.feature.auth.AuthError
 import com.aniable.anibl.feature.auth.AuthPayload
-import com.aniable.anibl.feature.auth.UserConstraints
-import com.aniable.anibl.feature.auth.UserEntity
+import com.aniable.anibl.feature.auth.entity.UserConstraints
+import com.aniable.anibl.feature.auth.entity.UserEntity
 import com.aniable.anibl.feature.auth.repository.AuthRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

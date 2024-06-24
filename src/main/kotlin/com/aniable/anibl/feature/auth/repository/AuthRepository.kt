@@ -18,7 +18,7 @@
 
 package com.aniable.anibl.feature.auth.repository
 
-import com.aniable.anibl.feature.auth.UserEntity
+import com.aniable.anibl.feature.auth.entity.UserEntity
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 import java.util.*

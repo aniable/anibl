@@ -19,6 +19,7 @@
 package com.aniable.anibl.feature.auth
 
 import com.aniable.anibl.error.HttpException
+import com.aniable.anibl.feature.auth.entity.UserConstraints
 
 sealed class AuthError(val message: String) {
 

@@ -20,8 +20,8 @@ package com.aniable.anibl.feature.auth.controller
 
 import com.aniable.anibl.Result
 import com.aniable.anibl.feature.auth.AuthPayload
-import com.aniable.anibl.feature.auth.dto
 import com.aniable.anibl.feature.auth.dto.UserDto
+import com.aniable.anibl.feature.auth.entity.dto
 import com.aniable.anibl.feature.auth.handle
 import com.aniable.anibl.feature.auth.service.AuthServiceImpl
 import org.springframework.http.ResponseEntity
