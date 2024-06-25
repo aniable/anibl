@@ -37,8 +37,8 @@ class ErrorExceptionHandler : ErrorController {
 	fun handleException(exception: HttpException, request: HttpServletRequest): ResponseEntity<ErrorResponseBody> {
 		return ResponseEntity.status(exception.status).body(
 			ErrorResponseBody(
-				status = exception.status.value(),
-				error = exception.getReason(),
+				statusCode = exception.status.value(),
+				message = exception.getReason(),
 				path = request.requestURI.substring(request.contextPath.length)
 			)
 		)
@@ -54,8 +54,8 @@ class ErrorExceptionHandler : ErrorController {
 		}
 		return ResponseEntity.status(httpStatus).body(
 			ErrorResponseBody(
-				status = httpStatus.value(),
-				error = httpStatus.reasonPhrase,
+				statusCode = httpStatus.value(),
+				message = httpStatus.reasonPhrase,
 				path = request.requestURI.substring(request.contextPath.length)
 			)
 		)
