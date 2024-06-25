@@ -19,8 +19,10 @@
 package com.aniable.anibl.feature.auth.service
 
 import com.aniable.anibl.Result
+import com.aniable.anibl.config.JwtService
 import com.aniable.anibl.feature.auth.AuthError
 import com.aniable.anibl.feature.auth.AuthPayload
+import com.aniable.anibl.feature.auth.dto.AccessTokenDto
 import com.aniable.anibl.feature.auth.entity.UserConstraints
 import com.aniable.anibl.feature.auth.entity.UserEntity
 import com.aniable.anibl.feature.auth.repository.AuthRepository
@@ -35,6 +37,7 @@ class AuthServiceImpl(
 	private val authRepository: AuthRepository,
 	private val passwordEncoder: PasswordEncoder,
 	private val authenticationManager: AuthenticationManager,
+	private val jwtService: JwtService,
 ) : AuthService {
 
 	/**
@@ -56,7 +59,7 @@ class AuthServiceImpl(
 	}
 
 
-	override fun register(payload: AuthPayload.UsernamePassword): Result<UserEntity, AuthError> {
+	override fun register(payload: AuthPayload.UsernamePassword): Result<AccessTokenDto, AuthError> {
 		val authResult = verifyAuthPayload(payload)
 		if (authResult is Result.Failure) return authResult
 
@@ -68,13 +71,14 @@ class AuthServiceImpl(
 					apiKey = generateSecureId()
 				)
 			)
-			Result.Success(user)
+			val token = jwtService.generateToken(user)
+			Result.Success(AccessTokenDto(userId = user.id!!, accessToken = token?.token))
 		} catch (e: Exception) {
 			Result.Failure(AuthError.Unknown(e.localizedMessage))
 		}
 	}
 
-	override fun login(payload: AuthPayload.UsernamePassword): Result<UserEntity, AuthError> {
+	override fun login(payload: AuthPayload.UsernamePassword): Result<AccessTokenDto, AuthError> {
 		try {
 			authenticationManager.authenticate(UsernamePasswordAuthenticationToken(payload.username, payload.password))
 		} catch (e: Exception) {
@@ -83,6 +87,7 @@ class AuthServiceImpl(
 
 		val user = authRepository.findByUsername(payload.username.lowercase())
 			?: return Result.Failure(AuthError.UserDoesNotExist())
-		return Result.Success(user)
+		val token = jwtService.generateToken(user)
+		return Result.Success(AccessTokenDto(userId = user.id!!, accessToken = token?.token))
 	}
 }

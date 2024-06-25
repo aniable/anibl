@@ -16,15 +16,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.aniable.anibl.feature.auth.service
+package com.aniable.anibl.feature.auth.dto
 
-import com.aniable.anibl.Result
-import com.aniable.anibl.feature.auth.AuthError
-import com.aniable.anibl.feature.auth.AuthPayload
-import com.aniable.anibl.feature.auth.dto.AccessTokenDto
+import com.fasterxml.jackson.annotation.JsonProperty
+import java.util.*
 
-interface AuthService {
-
-	fun register(payload: AuthPayload.UsernamePassword): Result<AccessTokenDto, AuthError>
-	fun login(payload: AuthPayload.UsernamePassword): Result<AccessTokenDto, AuthError>
-}
+data class AccessTokenDto(
+	@JsonProperty("user_id") val userId: UUID,
+	@JsonProperty("access_token") val accessToken: String?,
+)
