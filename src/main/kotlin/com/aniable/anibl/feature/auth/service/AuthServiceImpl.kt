@@ -24,8 +24,8 @@ import com.aniable.anibl.feature.auth.AuthPayload
 import com.aniable.anibl.feature.auth.entity.UserConstraints
 import com.aniable.anibl.feature.auth.entity.UserEntity
 import com.aniable.anibl.feature.auth.repository.AuthRepository
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.*
@@ -34,7 +34,7 @@ import java.util.*
 class AuthServiceImpl(
 	private val authRepository: AuthRepository,
 	private val passwordEncoder: PasswordEncoder,
-	private val logger: Logger = LoggerFactory.getLogger(AuthService::class.java),
+	private val authenticationManager: AuthenticationManager,
 ) : AuthService {
 
 	/**
@@ -68,8 +68,6 @@ class AuthServiceImpl(
 					apiKey = generateSecureId()
 				)
 			)
-
-			logger.info("User registered {}", user.id)
 			Result.Success(user)
 		} catch (e: Exception) {
 			Result.Failure(AuthError.Unknown(e.localizedMessage))
@@ -77,15 +75,14 @@ class AuthServiceImpl(
 	}
 
 	override fun login(payload: AuthPayload.UsernamePassword): Result<UserEntity, AuthError> {
-		val foundUser = authRepository.findByUsername(payload.username.lowercase())
-			?: return Result.Failure(AuthError.UserDoesNotExist())
-
-		val foundUserPasswordHash = foundUser.passwordHash
-		if (!passwordEncoder.matches(payload.password, foundUserPasswordHash)) {
-			return Result.Failure(AuthError.InvalidLogin())
+		try {
+			authenticationManager.authenticate(UsernamePasswordAuthenticationToken(payload.username, payload.password))
+		} catch (e: Exception) {
+			return Result.Failure(AuthError.InvalidLogin(e.localizedMessage))
 		}
 
-		logger.info("User logged in {}", foundUser.id)
-		return Result.Success(foundUser)
+		val user = authRepository.findByUsername(payload.username.lowercase())
+			?: return Result.Failure(AuthError.UserDoesNotExist())
+		return Result.Success(user)
 	}
 }

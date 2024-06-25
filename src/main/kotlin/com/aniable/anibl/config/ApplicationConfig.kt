@@ -20,13 +20,21 @@
 
 package com.aniable.anibl.config
 
+import com.aniable.anibl.error.HttpException
+import com.aniable.anibl.feature.auth.AuthError
+import com.aniable.anibl.feature.auth.repository.AuthRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.AuthenticationProvider
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 
 @Configuration
-class ApplicationConfig {
+class ApplicationConfig(private val authRepository: AuthRepository) {
 
 	/**
 	 * Parameters for the Argon2 password encoder.
@@ -67,5 +75,27 @@ class ApplicationConfig {
 			Argon2Parameters.ARGON2_MEMORY,
 			Argon2Parameters.ARGON2_ITERATIONS
 		)
+	}
+
+	@Bean
+	fun userDetailsService(): UserDetailsService {
+		return UserDetailsService { username: String? ->
+			username?.let {
+				authRepository.findByUsername(it)
+			} ?: throw HttpException.NotFound(AuthError.UserDoesNotExist().message)
+		}
+	}
+
+	@Bean
+	fun authenticationProvider(): AuthenticationProvider {
+		val provider = DaoAuthenticationProvider()
+		provider.setUserDetailsService(userDetailsService())
+		provider.setPasswordEncoder(passwordEncoder())
+		return provider
+	}
+
+	@Bean
+	fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager {
+		return authenticationConfiguration.authenticationManager
 	}
 }
