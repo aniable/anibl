@@ -20,15 +20,13 @@
 
 package com.aniable.anibl.config
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 
 @Configuration
-class ApplicationConfig(private val logger: Logger = LoggerFactory.getLogger(ApplicationConfig::class.java)) {
+class ApplicationConfig {
 
 	/**
 	 * Parameters for the Argon2 password encoder.
@@ -62,7 +60,6 @@ class ApplicationConfig(private val logger: Logger = LoggerFactory.getLogger(App
 	 */
 	@Bean
 	fun passwordEncoder(): PasswordEncoder {
-		logger.info("passwordEncoder {}", Argon2Parameters.toString())
 		return Argon2PasswordEncoder(
 			Argon2Parameters.ARGON2_SALT_LENGTH,
 			Argon2Parameters.ARGON2_HASH_LENGTH,
