@@ -48,12 +48,13 @@ data class UserEntity(
 		length = UserConstraints.USERNAME_MAX_LENGTH
 	) @JvmField val username: String,
 	@Column(name = "password_hash", nullable = false) val passwordHash: String,
+	@Column(name = "role", nullable = false) @Enumerated(EnumType.STRING) val role: Role = Role.USER,
 	@Column(name = "api_key", unique = true, nullable = false, length = 36) val apiKey: String,
 	@CreatedDate var createdDate: LocalDateTime? = null,
 	@LastModifiedDate var lastModifiedDate: LocalDateTime? = null,
 ) : UserDetails {
 
-	override fun getAuthorities(): MutableCollection<out GrantedAuthority> = mutableListOf()
+	override fun getAuthorities(): MutableCollection<out GrantedAuthority> = mutableListOf(role.getAuthority())
 
 	override fun getPassword(): String = passwordHash
 
@@ -63,6 +64,7 @@ data class UserEntity(
 fun UserEntity.dto() = UserDto(
 	id = this.id!!,
 	username = this.username,
+	role = role.name.lowercase(),
 	apiKey = this.apiKey,
 	createdDate = createdDate,
 	lastModifiedDate = lastModifiedDate

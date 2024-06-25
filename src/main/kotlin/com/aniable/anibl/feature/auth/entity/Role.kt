@@ -16,17 +16,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.aniable.anibl.feature.auth.dto
+package com.aniable.anibl.feature.auth.entity
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.LocalDateTime
-import java.util.*
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 
-data class UserDto(
-	val id: UUID,
-	val username: String,
-	val role: String,
-	@JsonProperty("api_key") val apiKey: String,
-	@JsonProperty("created_date") val createdDate: LocalDateTime?,
-	@JsonProperty("last_modified_date") val lastModifiedDate: LocalDateTime?,
-)
+enum class Role {
+
+	USER, ADMIN, MANAGER;
+
+	fun role() = "ROLE_${this.name}"
+
+	fun getAuthority(): SimpleGrantedAuthority = SimpleGrantedAuthority(role())
+}

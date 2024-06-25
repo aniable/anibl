@@ -22,9 +22,12 @@ package com.aniable.anibl.config
 
 import com.aniable.anibl.error.HttpException
 import com.aniable.anibl.feature.auth.AuthError
+import com.aniable.anibl.feature.auth.entity.Role
 import com.aniable.anibl.feature.auth.repository.AuthRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
@@ -97,5 +100,11 @@ class ApplicationConfig(private val authRepository: AuthRepository) {
 	@Bean
 	fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager {
 		return authenticationConfiguration.authenticationManager
+	}
+
+	@Bean
+	fun roleHierarchy(): RoleHierarchy {
+		return RoleHierarchyImpl.withDefaultRolePrefix().role(Role.MANAGER.name).implies(Role.ADMIN.name)
+			.role(Role.ADMIN.name).implies(Role.USER.name).build()
 	}
 }
