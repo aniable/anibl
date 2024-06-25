@@ -42,7 +42,7 @@ class JwtService(
 	}
 
 	private fun extractAllClaims(token: String): Claims {
-		return Jwts.parser().verifyWith(getSecretSigningKey()).build().parseSignedClaims(token).payload;
+		return Jwts.parser().verifyWith(getSecretSigningKey()).build().parseSignedClaims(token).payload
 	}
 
 	private fun <T : Any> extractClaim(token: String, resolver: (Claims) -> T): T {
