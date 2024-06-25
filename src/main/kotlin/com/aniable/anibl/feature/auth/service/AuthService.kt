@@ -21,10 +21,10 @@ package com.aniable.anibl.feature.auth.service
 import com.aniable.anibl.Result
 import com.aniable.anibl.feature.auth.AuthError
 import com.aniable.anibl.feature.auth.AuthPayload
-import com.aniable.anibl.feature.auth.entity.UserEntity
+import com.aniable.anibl.feature.auth.dto.AccessTokenDto
 
 interface AuthService {
 
-	fun register(payload: AuthPayload.UsernamePassword): Result<UserEntity, AuthError>
-	fun login(payload: AuthPayload.UsernamePassword): Result<UserEntity, AuthError>
+	fun register(payload: AuthPayload.UsernamePassword): Result<AccessTokenDto, AuthError>
+	fun login(payload: AuthPayload.UsernamePassword): Result<AccessTokenDto, AuthError>
 }

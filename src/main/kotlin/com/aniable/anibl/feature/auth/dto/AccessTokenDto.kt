@@ -19,14 +19,9 @@
 package com.aniable.anibl.feature.auth.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.LocalDateTime
 import java.util.*
 
-data class UserDto(
-	val id: UUID,
-	val username: String,
-	val role: String,
-	@JsonProperty("api_key") val apiKey: String,
-	@JsonProperty("created_date") val createdDate: LocalDateTime?,
-	@JsonProperty("last_modified_date") val lastModifiedDate: LocalDateTime?,
+data class AccessTokenDto(
+	@JsonProperty("user_id") val userId: UUID,
+	@JsonProperty("access_token") val accessToken: String?,
 )

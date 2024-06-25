@@ -2,8 +2,9 @@
 kotlin = "2.0.0"
 springBoot = "3.3.0"
 springDependencyManagement = "1.1.5"
-springSecurityCrypto = "6.3.0"
+springSecurity = "6.3.0"
 bcpkixJdk18on = "1.78.1"
+jjwt = "0.12.6"
 jacksonModuleKotlin = "2.17.1"
 h2 = "2.2.224"
 junitPlatformLauncher = "1.11.0-M2"
@@ -12,10 +13,16 @@ junitPlatformLauncher = "1.11.0-M2"
 spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-starter-mail", version.ref = "springBoot" }
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
 spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "springBoot" }
-spring-security-crypto = { module = "org.springframework.security:spring-security-crypto", version.ref = "springSecurityCrypto" }
+spring-security-core = { module = "org.springframework.security:spring-security-core", version.ref = "springSecurity" }
+spring-security-web = { module = "org.springframework.security:spring-security-web", version.ref = "springSecurity" }
+spring-security-config = { module = "org.springframework.security:spring-security-config", version.ref = "springSecurity" }
+spring-security-crypto = { module = "org.springframework.security:spring-security-crypto", version.ref = "springSecurity" }
 spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "springBoot" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
 bcpkix-jdk18on = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bcpkixJdk18on" }
+jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt" }
+jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt" }
+jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwt" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jacksonModuleKotlin" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 h2 = { module = "com.h2database:h2", version.ref = "h2" }

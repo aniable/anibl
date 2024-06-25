@@ -20,8 +20,7 @@ package com.aniable.anibl.feature.auth.controller
 
 import com.aniable.anibl.Result
 import com.aniable.anibl.feature.auth.AuthPayload
-import com.aniable.anibl.feature.auth.dto.UserDto
-import com.aniable.anibl.feature.auth.entity.dto
+import com.aniable.anibl.feature.auth.dto.AccessTokenDto
 import com.aniable.anibl.feature.auth.handle
 import com.aniable.anibl.feature.auth.service.AuthServiceImpl
 import org.springframework.http.ResponseEntity
@@ -32,27 +31,27 @@ import org.springframework.web.bind.annotation.RestController
 
 @Suppress("unused")
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping(AuthController.ROUTE)
 class AuthControllerImpl(private val authServiceImpl: AuthServiceImpl) : AuthController {
 
 	@PostMapping("/register")
-	override fun register(@RequestBody payload: AuthPayload.UsernamePassword): ResponseEntity<UserDto> {
+	override fun register(@RequestBody payload: AuthPayload.UsernamePassword): ResponseEntity<AccessTokenDto> {
 		when (val response = authServiceImpl.register(payload)) {
 			is Result.Failure -> response.error.handle()
 			is Result.Success -> {
-				val userDto = response.data.dto()
-				return ResponseEntity.ok(userDto)
+				val dto = response.data
+				return ResponseEntity.ok(dto)
 			}
 		}
 	}
 
 	@PostMapping("/login")
-	override fun login(@RequestBody payload: AuthPayload.UsernamePassword): ResponseEntity<UserDto> {
+	override fun login(@RequestBody payload: AuthPayload.UsernamePassword): ResponseEntity<AccessTokenDto> {
 		when (val response = authServiceImpl.login(payload)) {
 			is Result.Failure -> response.error.handle()
 			is Result.Success -> {
-				val userDto = response.data.dto()
-				return ResponseEntity.ok(userDto)
+				val dto = response.data
+				return ResponseEntity.ok(dto)
 			}
 		}
 	}
