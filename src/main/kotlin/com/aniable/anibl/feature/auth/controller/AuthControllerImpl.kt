@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @Suppress("unused")
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping(AuthController.ROUTE)
 class AuthControllerImpl(private val authServiceImpl: AuthServiceImpl) : AuthController {
 
 	@PostMapping("/register")

@@ -24,6 +24,12 @@ import org.springframework.http.ResponseEntity
 
 interface AuthController {
 
+	companion object {
+
+		const val ROUTE = "/api/v1/auth"
+		const val REQUEST_MATCHER = "$ROUTE/**"
+	}
+
 	fun register(payload: AuthPayload.UsernamePassword): ResponseEntity<UserDto>
 	fun login(payload: AuthPayload.UsernamePassword): ResponseEntity<UserDto>
 //	fun logout(payload: AuthPayload.Session)
