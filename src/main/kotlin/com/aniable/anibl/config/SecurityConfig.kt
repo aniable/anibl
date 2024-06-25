@@ -32,7 +32,7 @@ class SecurityConfig {
 
 	@Bean
 	fun securityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
-		val permittedMatchers = arrayOf("/h2-console/**", AuthController.REQUEST_MATCHER)
+		val permittedMatchers = arrayOf("/h2-console/**", "/error/**", AuthController.REQUEST_MATCHER)
 		return httpSecurity.csrf { it.disable() }.headers { headers -> headers.frameOptions { it.disable() } }
 			.authorizeHttpRequests { it.requestMatchers(*permittedMatchers).permitAll().anyRequest().authenticated() }
 			.build()
