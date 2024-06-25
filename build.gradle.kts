@@ -24,6 +24,8 @@ dependencies {
 	implementation(libs.spring.boot.starter.web)
 	implementation(libs.spring.boot.starter.data.jpa)
 	implementation(libs.spring.security.core)
+	implementation(libs.spring.security.web)
+	implementation(libs.spring.security.config)
 	implementation(libs.spring.security.crypto)
 	runtimeOnly(libs.bcpkix.jdk18on)
 	implementation(libs.jjwt.api)
