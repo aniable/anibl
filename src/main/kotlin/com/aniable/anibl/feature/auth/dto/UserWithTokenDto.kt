@@ -19,9 +19,5 @@
 package com.aniable.anibl.feature.auth.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.util.*
 
-data class AccessTokenDto(
-	@JsonProperty("user_id") val userId: UUID,
-	@JsonProperty("access_token") val accessToken: String?,
-)
+data class UserWithTokenDto(val user: UserDto, @JsonProperty("access_token") val accessToken: String?)

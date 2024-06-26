@@ -19,7 +19,7 @@
 package com.aniable.anibl.feature.auth.controller
 
 import com.aniable.anibl.feature.auth.AuthPayload
-import com.aniable.anibl.feature.auth.dto.AccessTokenDto
+import com.aniable.anibl.feature.auth.dto.UserWithTokenDto
 import org.springframework.http.ResponseEntity
 
 interface AuthController {
@@ -30,8 +30,8 @@ interface AuthController {
 		const val REQUEST_MATCHER = "$ROUTE/**"
 	}
 
-	fun register(payload: AuthPayload.UsernamePassword): ResponseEntity<AccessTokenDto>
-	fun login(payload: AuthPayload.UsernamePassword): ResponseEntity<AccessTokenDto>
+	fun register(payload: AuthPayload.UsernamePassword): ResponseEntity<UserWithTokenDto>
+	fun login(payload: AuthPayload.UsernamePassword): ResponseEntity<UserWithTokenDto>
 //	fun logout(payload: AuthPayload.Session)
 //	fun delete(payload: AuthPayload.Session)
 //	fun changePassword(payload: AuthPayload.ChangePassword)
