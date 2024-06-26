@@ -19,6 +19,7 @@
 package com.aniable.anibl.feature.auth.entity
 
 import com.aniable.anibl.feature.auth.dto.UserDto
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
@@ -50,8 +51,8 @@ data class UserEntity(
 	@Column(name = "password_hash", nullable = false) val passwordHash: String,
 	@Column(name = "role", nullable = false) @Enumerated(EnumType.STRING) val role: Role = Role.USER,
 	@Column(name = "api_key", unique = true, nullable = false, length = 36) val apiKey: String,
-	@CreatedDate var createdDate: LocalDateTime? = null,
-	@LastModifiedDate var lastModifiedDate: LocalDateTime? = null,
+	@CreatedDate @Column(name = "created_date") @JsonIgnore var createdDate: LocalDateTime? = null,
+	@LastModifiedDate @Column(name = "last_modified_date") @JsonIgnore var lastModifiedDate: LocalDateTime? = null,
 ) : UserDetails {
 
 	override fun getAuthorities(): MutableCollection<out GrantedAuthority> = mutableListOf(role.getAuthority())
