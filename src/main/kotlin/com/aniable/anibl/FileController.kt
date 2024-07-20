@@ -29,9 +29,9 @@ class FileController(private val imageService: ImageService) {
 	@PostMapping(
 		"/upload", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE]
 	)
-	fun uploadImage(@RequestParam file: MultipartFile): ResponseEntity<String> {
-		val fileId = imageService.uploadImage(file)
-		return ResponseEntity.ok(fileId)
+	fun uploadImage(@RequestParam file: MultipartFile): ResponseEntity<Image> {
+		val image = imageService.uploadImage(file)
+		return ResponseEntity.ok(image)
 	}
 
 	@GetMapping("/{name}", produces = [MediaType.IMAGE_JPEG_VALUE])

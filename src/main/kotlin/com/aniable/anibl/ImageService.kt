@@ -30,19 +30,22 @@ import java.util.*
 @Service
 class ImageService(
 	private val s3Client: S3Client,
+	private val imageRepository: ImageRepository,
 	@Value("\${AWS_BUCKET}") private val bucketName: String,
 ) {
 
 	private fun isImage(file: MultipartFile) =
 		arrayOf("image/jpeg", "image/png", "image/webp").contains(file.contentType)
 
-	fun uploadImage(file: MultipartFile): String? {
+	fun uploadImage(file: MultipartFile): Image {
 		if (!isImage(file)) throw RuntimeException("File is not an image.")
 
-		val fileId = UUID.randomUUID().toString()
-		val request = PutObjectRequest.builder().bucket(bucketName).key(fileId).build()
+		val imageId = UUID.randomUUID().toString()
+		val request = PutObjectRequest.builder().bucket(bucketName).key(imageId).build()
 		s3Client.putObject(request, RequestBody.fromBytes(file.bytes))
-		return fileId
+
+		val image = imageRepository.save(Image(imageId = imageId, contentType = file.contentType))
+		return image
 	}
 
 	fun getImage(imageName: String): ByteArray? {
