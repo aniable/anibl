@@ -1,6 +1,6 @@
 # Anibl
 
-Anibl (AN-uh-buhl) is a free and open-source file uploader.
+Anibl (AN-uh-buhl) is a free and open-source image uploader.
 
 ## License
 
