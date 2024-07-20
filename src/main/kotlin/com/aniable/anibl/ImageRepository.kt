@@ -18,14 +18,8 @@
 
 package com.aniable.anibl
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing
+import org.springframework.data.repository.CrudRepository
+import org.springframework.stereotype.Repository
 
-@SpringBootApplication
-@EnableJpaAuditing
-class AniblApplication
-
-fun main(args: Array<String>) {
-	runApplication<AniblApplication>(*args)
-}
+@Repository
+interface ImageRepository : CrudRepository<Image, Int>

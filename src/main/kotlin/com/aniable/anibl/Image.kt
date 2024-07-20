@@ -18,14 +18,18 @@
 
 package com.aniable.anibl
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing
+import jakarta.persistence.*
+import jakarta.persistence.GenerationType.IDENTITY
+import org.hibernate.annotations.CreationTimestamp
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.time.Instant
 
-@SpringBootApplication
-@EnableJpaAuditing
-class AniblApplication
-
-fun main(args: Array<String>) {
-	runApplication<AniblApplication>(*args)
-}
+@Entity
+@Table(name = "abl_images")
+@EntityListeners(AuditingEntityListener::class)
+class Image(
+	@Id @GeneratedValue(strategy = IDENTITY) val id: Int? = null,
+	@Column(name = "image_id", nullable = false, unique = true) val imageId: String,
+	@Column(name = "content_type") val contentType: String?,
+	@Column(name = "uploaded_at") @CreationTimestamp val uploadedAt: Instant? = null,
+)
