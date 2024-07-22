@@ -22,4 +22,7 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ImageRepository : CrudRepository<Image, Int>
+interface ImageRepository : CrudRepository<Image, Int> {
+
+	fun findByImageId(imageId: String): Image?
+}

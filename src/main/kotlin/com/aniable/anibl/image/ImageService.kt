@@ -49,9 +49,11 @@ class ImageService(
 		return imageRepository.save(Image(imageId = imageId, contentType = file.contentType))
 	}
 
-	fun getImage(imageId: String): ByteArray? {
+	fun getImage(imageId: String): Pair<Image?, ByteArray> {
 		val request = GetObjectRequest.builder().bucket(bucketName).key(imageId).build()
-		return s3Client.getObject(request).readAllBytes()
+		val image = imageRepository.findByImageId(imageId)
+		val bytes = s3Client.getObject(request).readAllBytes()
+		return Pair(image, bytes)
 	}
 
 	fun deleteImage(imageId: String) {

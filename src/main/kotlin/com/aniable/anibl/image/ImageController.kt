@@ -26,17 +26,18 @@ import org.springframework.web.multipart.MultipartFile
 @RestController
 class ImageController(private val imageService: ImageService) {
 
-	@PostMapping(
-		"/upload", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE]
-	)
+	@PostMapping("/upload", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
 	fun uploadImage(@RequestParam file: MultipartFile): ResponseEntity<Image> {
 		val image = imageService.uploadImage(file)
 		return ResponseEntity.ok(image)
 	}
 
-	@GetMapping("/{imageId}", produces = [MediaType.IMAGE_JPEG_VALUE])
+	@GetMapping("/{imageId}")
 	fun getImage(@PathVariable imageId: String): ResponseEntity<ByteArray> {
-		return ResponseEntity.ok(imageService.getImage(imageId))
+		val data = imageService.getImage(imageId)
+		return ResponseEntity.ok()
+			.contentType(MediaType.parseMediaType(data.first?.contentType ?: MediaType.IMAGE_JPEG_VALUE))
+			.body(data.second)
 	}
 
 	@DeleteMapping("/{imageId}")
