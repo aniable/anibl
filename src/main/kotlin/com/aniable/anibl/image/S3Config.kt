@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.aniable.anibl
+package com.aniable.anibl.image
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -27,9 +27,13 @@ import software.amazon.awssdk.services.s3.S3Client
 import java.net.URI
 
 @Configuration
-class S3Config(@Value("\${AWS_URL}") private val url: String) {
+class S3Config(
+	@Value("\${AWS_URL}") private val url: String,
+	@Value("\${AWS_REGION}") private val region: String,
+) {
 
 	@Bean
-	fun s3Client(): S3Client = S3Client.builder().region(Region.US_EAST_1).endpointOverride(URI.create(url))
-		.credentialsProvider(EnvironmentVariableCredentialsProvider.create()).build()
+	fun s3Client(): S3Client =
+		S3Client.builder().region(Region.of(region.lowercase())).endpointOverride(URI.create(url))
+			.credentialsProvider(EnvironmentVariableCredentialsProvider.create()).build()
 }

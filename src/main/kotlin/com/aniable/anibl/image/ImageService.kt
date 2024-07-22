@@ -16,13 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.aniable.anibl
+package com.aniable.anibl.image
 
+import com.aniable.anibl.ext.isImage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import java.util.*
@@ -34,22 +37,25 @@ class ImageService(
 	@Value("\${AWS_BUCKET}") private val bucketName: String,
 ) {
 
-	private fun isImage(file: MultipartFile) =
-		arrayOf("image/jpeg", "image/png", "image/webp").contains(file.contentType)
-
+	@Transactional
 	fun uploadImage(file: MultipartFile): Image {
-		if (!isImage(file)) throw RuntimeException("File is not an image.")
+		if (file.isEmpty) throw RuntimeException("File is empty.")
+		if (!file.isImage) throw RuntimeException("File is not an image.")
 
 		val imageId = UUID.randomUUID().toString()
 		val request = PutObjectRequest.builder().bucket(bucketName).key(imageId).build()
-		s3Client.putObject(request, RequestBody.fromBytes(file.bytes))
 
-		val image = imageRepository.save(Image(imageId = imageId, contentType = file.contentType))
-		return image
+		s3Client.putObject(request, RequestBody.fromBytes(file.bytes))
+		return imageRepository.save(Image(imageId = imageId, contentType = file.contentType))
 	}
 
-	fun getImage(imageName: String): ByteArray? {
-		val request = GetObjectRequest.builder().bucket(bucketName).key(imageName).build()
+	fun getImage(imageId: String): ByteArray? {
+		val request = GetObjectRequest.builder().bucket(bucketName).key(imageId).build()
 		return s3Client.getObject(request).readAllBytes()
+	}
+
+	fun deleteImage(imageId: String) {
+		val request = DeleteObjectRequest.builder().bucket(bucketName).key(imageId).build()
+		s3Client.deleteObject(request)
 	}
 }

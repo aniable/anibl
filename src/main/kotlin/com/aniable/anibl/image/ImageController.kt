@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.aniable.anibl
+package com.aniable.anibl.image
 
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
-class FileController(private val imageService: ImageService) {
+class ImageController(private val imageService: ImageService) {
 
 	@PostMapping(
 		"/upload", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE]
@@ -34,8 +34,14 @@ class FileController(private val imageService: ImageService) {
 		return ResponseEntity.ok(image)
 	}
 
-	@GetMapping("/{name}", produces = [MediaType.IMAGE_JPEG_VALUE])
-	fun getImage(@PathVariable name: String): ResponseEntity<ByteArray> {
-		return ResponseEntity.ok(imageService.getImage(name))
+	@GetMapping("/{imageId}", produces = [MediaType.IMAGE_JPEG_VALUE])
+	fun getImage(@PathVariable imageId: String): ResponseEntity<ByteArray> {
+		return ResponseEntity.ok(imageService.getImage(imageId))
+	}
+
+	@DeleteMapping("/{imageId}")
+	fun deleteImage(@PathVariable imageId: String): ResponseEntity<Any> {
+		imageService.deleteImage(imageId)
+		return ResponseEntity.noContent().build()
 	}
 }
