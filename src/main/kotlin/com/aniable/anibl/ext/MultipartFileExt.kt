@@ -20,5 +20,7 @@ package com.aniable.anibl.ext
 
 import org.springframework.web.multipart.MultipartFile
 
-val MultipartFile.isImage: Boolean
-	get() = arrayOf("image/jpeg", "image/png", "image/webp").contains(this.contentType?.lowercase())
+val MultipartFile.isValidContentType: Boolean
+	get() = arrayOf(
+		"image/jpeg", "image/png", "image/webp", "image/svg+xml", "image/gif", "video/mp4", "video/mpeg", "video/webm"
+	).contains(this.contentType?.lowercase())

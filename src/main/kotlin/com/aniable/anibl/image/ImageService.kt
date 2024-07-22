@@ -18,7 +18,7 @@
 
 package com.aniable.anibl.image
 
-import com.aniable.anibl.ext.isImage
+import com.aniable.anibl.ext.isValidContentType
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -40,7 +40,7 @@ class ImageService(
 	@Transactional
 	fun uploadImage(file: MultipartFile): Image {
 		if (file.isEmpty) throw RuntimeException("File is empty.")
-		if (!file.isImage) throw RuntimeException("File is not an image.")
+		if (!file.isValidContentType) throw RuntimeException("File is not a valid media type.")
 
 		val imageId = UUID.randomUUID().toString()
 		val request = PutObjectRequest.builder().bucket(bucketName).key(imageId).build()
