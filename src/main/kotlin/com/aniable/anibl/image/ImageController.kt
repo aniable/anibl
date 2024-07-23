@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
+@RequestMapping("/i")
 class ImageController(private val imageService: ImageService) {
 
 	@PostMapping("/upload", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
